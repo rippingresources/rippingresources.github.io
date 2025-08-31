@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <title>RR Archive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
     body { 
         font-family: 'Inter', Arial, sans-serif; 
@@ -46,10 +47,10 @@
     }
 
     button {
-        padding: 12px 18px;
-        margin-left: 10px;
+        padding: 6px 10px;
+        margin: 2px;
         border: none;
-        border-radius: 10px;
+        border-radius: 6px;
         background: #28a745;
         color: white;
         font-weight: bold;
@@ -61,13 +62,12 @@
         background: #34d058;
     }
 
-    /* Cards grid */
+
     #flp-list {
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         gap: 24px;
-
     }
 
     .card {
@@ -90,7 +90,7 @@
     .card h2 {
         font-size: 1.3rem;
         margin-bottom: 10px;
-        color: #34d058 
+        color: #34d058;
     }
 
     .card p {
@@ -104,26 +104,95 @@
         font-weight: bold;
         text-decoration: none;
     }
-</style>
+
+    .rating {
+        margin-top: 12px;
+    }
+
+    .avg-score {
+        margin-left: 8px;
+        font-weight: bold;
+        color: #34d058;
+    }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1>Ripping Resources FLP Archive</h1>
 
-        <!-- Search -->
+
         <div class="search-container">
             <input type="text" id="searchBox" placeholder="Search FLPs...">
             <button onclick="search()">Search</button>
         </div>
 
-        <!-- Cards -->
+       
         <div id="flp-list"></div>
     </div>
 
-    <!-- PapaParse -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <script>
-    let flpData = []; // store all data
+
+
+    <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyA0wO3s4xKCiyTF_cFjSEZGFvFuG4Ofa0o",
+        authDomain: "flplibraryvotes.firebaseapp.com",
+        projectId: "flplibraryvotes",
+        storageBucket: "flplibraryvotes.appspot.com",
+        messagingSenderId: "257498428001",
+        appId: "1:257498428001:web:bd66606c9210359e1ff020"
+    };
+
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+
+    async function initAuth() {
+        await signInAnonymously(auth);
+    }
+    initAuth();
+
+
+    async function rate(projectId, value) {
+        const user = auth.currentUser;
+        if (!user) return alert('ERROR!');
+        const rateRef = doc(db, 'ratings', projectId, 'userRatings', user.uid);
+        await setDoc(rateRef, { v: value });
+    }
+
+    function attachRatingHandlers(cardEl, projectId) {
+        const buttons = cardEl.querySelectorAll('.rate-btn');
+        const avgSpan = cardEl.querySelector('.avg-score');
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', async () => {
+                const val = parseInt(btn.dataset.value);
+                try {
+                    await rate(projectId, val);
+                } catch (e) {
+                    alert(e.message);
+                }
+            });
+        });
+
+        onSnapshot(collection(db, 'ratings', projectId, 'userRatings'), snap => {
+            if (snap.empty) {
+                avgSpan.textContent = "0";
+                return;
+            }
+            const sum = snap.docs.reduce((acc, d) => acc + d.data().v, 0);
+            const avg = (sum / snap.docs.length).toFixed(1);
+            avgSpan.textContent = avg;
+        });
+    }
+
+    let flpData = [];
 
     async function loadData() {
         let url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LKv2QcODF4I3v6H7EJ5PYBzmtF8Vt_oa6iCLTUzb9iDF3jIF8W3fJzqgBXAvlz1DYOD22TlCbMDL/pub?output=csv";
@@ -138,10 +207,10 @@
 
     function displayData(data) {
         let container = document.getElementById("flp-list");
-        container.innerHTML = ""; // clear previous cards
+        container.innerHTML = "";
 
-        data.forEach(row => {
-            if (!row.Title) return; // skip empty rows
+        data.forEach((row, idx) => {
+            if (!row.Title) return;
             let div = document.createElement("div");
             div.className = "card";
             div.innerHTML = `
@@ -151,8 +220,15 @@
                 <p>Plugins: ${row.Plugins}</p>
                 <p>Notes: ${row.notes || ""}</p>
                 <a href="${row.Link}" target="_blank">Download</a>
+                <div class="rating">
+                    <span>Rate:</span>
+                    ${[...Array(11).keys()].map(n => `<button class="rate-btn" data-value="${n}">${n}</button>`).join('')}
+                    <span class="avg-score">0</span>
+                </div>
             `;
             container.appendChild(div);
+            const projectId = `flp-${idx}`;
+            attachRatingHandlers(div, projectId);
         });
     }
 
@@ -166,15 +242,12 @@
         displayData(filtered);
     }
 
-    // make search live as user types
     document.addEventListener("DOMContentLoaded", () => {
-        const searchBox = document.getElementById("searchBox");
-        searchBox.addEventListener("input", search);
+        document.getElementById("searchBox").addEventListener("input", search);
     });
-
-    loadData();
-</script>
-
+    initAuth().then(() => {
+        loadData(); // only load data after auth
+    });
+    </script>
 </body>
 </html>
-
