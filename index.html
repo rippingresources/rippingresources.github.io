@@ -1,254 +1,169 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>RR Archive</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-    <style>
-    body { 
-        font-family: 'Inter', Arial, sans-serif; 
-        margin: 0; 
-        background-color: #0d1f1a; 
-        color: #e6f4ea;           
-        min-height: 100vh;
-    }
-
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 40px 20px;
-    }
-
-    h1 {
-        text-align: center;
-        margin-bottom: 30px;
-        font-size: 2.2rem;
-        color: #ffffff;
-    }
-
-    /* Search bar */
-    .search-container {
-        display: flex;
-        justify-content: center;
-        margin-bottom: 40px;
-    }
-
-    #searchBox {
-        width: 320px;
-        padding: 12px 16px;
-        border-radius: 10px;
-        border: none;
-        outline: none;
-        font-size: 1rem;
-        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.5);
-        background-color: #162447; 
-        color: #ffffff;
-    }
-
-    button {
-        padding: 6px 10px;
-        margin: 2px;
-        border: none;
-        border-radius: 6px;
-        background: #28a745;
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.2s ease;
-    }
-
-    button:hover {
-        background: #34d058;
-    }
-
-
-    #flp-list {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 24px;
-    }
-
-    .card {
-        flex: 0 1 500px;
-        background-color: #162447; 
-        padding: 20px;
-        border-radius: 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-        text-align: left;
-        transition: transform 0.3s ease, box-shadow 0.3s ease, border 0.3s ease;
-        color: #ffffff;
-    }
-
-    .card:hover {
-        transform: translateY(-8px) scale(1.03);
-        box-shadow: 0 12px 24px rgba(0,0,0,0.7);
-        border: 1px solid #28a745;
-    }
-
-    .card h2 {
-        font-size: 1.3rem;
-        margin-bottom: 10px;
-        color: #34d058;
-    }
-
-    .card p {
-        margin: 6px 0;
-    }
-
-    .card a {
-        display: inline-block;
-        margin-top: 10px;
-        color: #28a745;
-        font-weight: bold;
-        text-decoration: none;
-    }
-
-    .rating {
-        margin-top: 12px;
-    }
-
-    .avg-score {
-        margin-left: 8px;
-        font-weight: bold;
-        color: #34d058;
-    }
-    </style>
+<meta charset="UTF-8">
+<title>RR Archive - Fire Rating</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Inter', Arial, sans-serif; margin: 0; background-color: #0d1f1a; color: #e6f4ea; min-height: 100vh; }
+.container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+h1 { text-align: center; margin-bottom: 30px; font-size: 2.2rem; color: #ffffff; }
+.search-container { display: flex; justify-content: center; margin-bottom: 40px; }
+#searchBox { width: 320px; padding: 12px 16px; border-radius: 10px; border: none; outline: none; font-size: 1rem; box-shadow: 0 3px 8px rgba(0,0,0,0.5); background-color: #162447; color: #ffffff; }
+#flp-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; }
+.card { flex: 0 1 500px; background-color: #162447; padding: 20px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); text-align: left; color: #ffffff; }
+.card h2 { font-size: 1.3rem; margin-bottom: 10px; color: #34d058; }
+.card p { margin: 6px 0; }
+.card a { display: inline-block; margin-top: 10px; color: #28a745; font-weight: bold; text-decoration: none; }
+.rating { margin-top: 10px; }
+.fire { width: 24px; cursor: pointer; margin-right: 4px; margin-bottom: -4px; filter: grayscale(100%) brightness(70%); transition: transform 0.2s, filter 0.2s; }
+.fire.highlight { filter: none; transform: scale(1.2); }
+.avg-score { margin-left: 8px; font-weight: bold; color: #34d058; }
+</style>
 </head>
 <body>
-    <div class="container">
-        <h1>Ripping Resources FLP Archive</h1>
+<div class="container">
+<h1>Ripping Resources FLP Archive</h1>
+<div class="search-container">
+    <input type="text" id="searchBox" placeholder="Search FLPs...">
+</div>
+<div id="flp-list"></div>
+</div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-        <div class="search-container">
-            <input type="text" id="searchBox" placeholder="Search FLPs...">
-            <button onclick="search()">Search</button>
-        </div>
+const firebaseConfig = {
+  apiKey: "AIzaSyA0wO3s4xKCiyTF_cFjSEZGFvFuG4Ofa0o",
+  authDomain: "flplibraryvotes.firebaseapp.com",
+  projectId: "flplibraryvotes",
+  storageBucket: "flplibraryvotes.firebasestorage.app",
+  messagingSenderId: "257498428001",
+  appId: "1:257498428001:web:bd66606c9210359e1ff020"
+};
 
-       
-        <div id="flp-list"></div>
-    </div>
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+await signInAnonymously(auth);
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+let flpData = [];
 
+// Load CSV data
+async function loadData() {
+    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LKv2QcODF4I3v6H7EJ5PYBzmtF8Vt_oa6iCLTUzb9iDF3jIF8W3fJzqgBXAvlz1DYOD22TlCbMDL/pub?output=csv";
+    const res = await fetch(url);
+    const csv = await res.text();
+    flpData = Papa.parse(csv, { header: true }).data;
+    displayData(flpData);
+}
 
-    <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+// Display cards
+function displayData(data) {
+    const container = document.getElementById("flp-list");
+    container.innerHTML = "";
+    data.forEach((row, idx) => {
+        if (!row.Title) return;
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyA0wO3s4xKCiyTF_cFjSEZGFvFuG4Ofa0o",
-        authDomain: "flplibraryvotes.firebaseapp.com",
-        projectId: "flplibraryvotes",
-        storageBucket: "flplibraryvotes.appspot.com",
-        messagingSenderId: "257498428001",
-        appId: "1:257498428001:web:bd66606c9210359e1ff020"
-    };
+        const div = document.createElement("div");
+        div.className = "card";
 
+        div.innerHTML = `
+            <h2>${row.Title}</h2>
+            <p>Creator: ${row.Creator}</p>
+            <p>DAW version: ${row['DAW version']}</p>
+            <p>Plugins: ${row.Plugins}</p>
+            <p>Notes: ${row.notes || ""}</p>
+            <a href="${row.Link}" target="_blank">Download</a>
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+            <div class="rating" data-field="accuracy">
+                <span>Accuracy:</span>
+                ${[1,2,3,4,5].map(n => `<img src="https://rippingresources.github.io/fire%20reaction.png" class="fire" data-value="${n}">`).join('')}
+                <span class="avg-score accuracy-score">0</span>
+            </div>
 
+            <div class="rating" data-field="easeOfUse">
+                <span>Ease of Use:</span>
+                ${[1,2,3,4,5].map(n => `<img src="https://rippingresources.github.io/fire%20reaction.png" class="fire" data-value="${n}">`).join('')}
+                <span class="avg-score ease-score">0</span>
+            </div>
 
-    async function initAuth() {
-        await signInAnonymously(auth);
-    }
-    initAuth();
+            <p>Combined: <span class="avg-score combined-score">0</span></p>
+        `;
+        container.appendChild(div);
 
+        attachRatingHandlers(div, `flp-${idx}`);
+    });
+}
 
-    async function rate(projectId, value) {
-        const user = auth.currentUser;
-        if (!user) return alert('ERROR!');
-        const rateRef = doc(db, 'ratings', projectId, 'userRatings', user.uid);
-        await setDoc(rateRef, { v: value });
-    }
+// Attach rating logic
+function attachRatingHandlers(cardEl, projectId) {
+    const ratingDivs = cardEl.querySelectorAll('.rating');
+    ratingDivs.forEach(ratingDiv => {
+        const fires = ratingDiv.querySelectorAll('.fire');
+        const field = ratingDiv.dataset.field;
+        let currentValue = 0;
 
-    function attachRatingHandlers(cardEl, projectId) {
-        const buttons = cardEl.querySelectorAll('.rate-btn');
-        const avgSpan = cardEl.querySelector('.avg-score');
+        function updateHighlight(upTo) {
+            fires.forEach((f, idx) => f.classList.toggle('highlight', idx < upTo));
+        }
 
-        buttons.forEach(btn => {
-            btn.addEventListener('click', async () => {
-                const val = parseInt(btn.dataset.value);
-                try {
-                    await rate(projectId, val);
-                } catch (e) {
-                    alert(e.message);
-                }
+        fires.forEach((fire, idx) => {
+            fire.addEventListener('mouseenter', () => updateHighlight(idx + 1));
+            fire.addEventListener('click', async () => {
+                currentValue = idx + 1;
+                updateHighlight(currentValue);
+                await setDoc(doc(db, 'ratings', projectId, 'userRatings', auth.currentUser.uid), { [field]: currentValue }, { merge: true });
             });
+            fire.addEventListener('mouseleave', () => updateHighlight(currentValue));
         });
-
-        onSnapshot(collection(db, 'ratings', projectId, 'userRatings'), snap => {
-            if (snap.empty) {
-                avgSpan.textContent = "0";
-                return;
-            }
-            const sum = snap.docs.reduce((acc, d) => acc + d.data().v, 0);
-            const avg = (sum / snap.docs.length).toFixed(1);
-            avgSpan.textContent = avg;
-        });
-    }
-
-    let flpData = [];
-
-    async function loadData() {
-        let url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LKv2QcODF4I3v6H7EJ5PYBzmtF8Vt_oa6iCLTUzb9iDF3jIF8W3fJzqgBXAvlz1DYOD22TlCbMDL/pub?output=csv";
-        let res = await fetch(url);
-        let csv = await res.text();
-
-        let parsed = Papa.parse(csv, { header: true });
-        flpData = parsed.data;
-
-        displayData(flpData);
-    }
-
-    function displayData(data) {
-        let container = document.getElementById("flp-list");
-        container.innerHTML = "";
-
-        data.forEach((row, idx) => {
-            if (!row.Title) return;
-            let div = document.createElement("div");
-            div.className = "card";
-            div.innerHTML = `
-                <h2>${row.Title}</h2>
-                <p>Creator: ${row.Creator}</p>
-                <p>DAW version: ${row['DAW version']}</p>
-                <p>Plugins: ${row.Plugins}</p>
-                <p>Notes: ${row.notes || ""}</p>
-                <a href="${row.Link}" target="_blank">Download</a>
-                <div class="rating">
-                    <span>Rate Accuracy:</span>
-                    ${[...Array(11).keys()].map(n => `<button class="rate-btn" data-value="${n}">${n}</button>`).join('')}
-                    <span class="avg-score">0</span>
-                </div>
-            `;
-            container.appendChild(div);
-            const projectId = `flp-${idx}`;
-            attachRatingHandlers(div, projectId);
-        });
-    }
-
-    function search() {
-        let query = document.getElementById("searchBox").value.toLowerCase();
-        let filtered = flpData.filter(row => {
-            return (row.Title && row.Title.toLowerCase().includes(query)) ||
-                   (row.Creator && row.Creator.toLowerCase().includes(query)) ||
-                   (row.Plugins && row.Plugins.toLowerCase().includes(query));
-        });
-        displayData(filtered);
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-        document.getElementById("searchBox").addEventListener("input", search);
     });
-    initAuth().then(() => {
-        loadData(); // only load data after auth
+
+    // Update averages
+    const accuracySpan = cardEl.querySelector('.accuracy-score');
+    const easeSpan = cardEl.querySelector('.ease-score');
+    const combinedSpan = cardEl.querySelector('.combined-score');
+
+    onSnapshot(collection(db, 'ratings', projectId, 'userRatings'), snap => {
+        if (snap.empty) {
+            accuracySpan.textContent = "0";
+            easeSpan.textContent = "0";
+            combinedSpan.textContent = "0";
+            return;
+        }
+
+        let sumAccuracy = 0, sumEase = 0, countAccuracy = 0, countEase = 0;
+        snap.docs.forEach(d => {
+            const data = d.data();
+            if (data.accuracy != null) { sumAccuracy += data.accuracy; countAccuracy++; }
+            if (data.easeOfUse != null) { sumEase += data.easeOfUse; countEase++; }
+        });
+
+        const avgAccuracy = countAccuracy ? sumAccuracy / countAccuracy : 0;
+        const avgEase = countEase ? sumEase / countEase : 0;
+        const combined = (avgAccuracy + avgEase) / (countAccuracy && countEase ? 2 : 1);
+
+        accuracySpan.textContent = avgAccuracy.toFixed(1);
+        easeSpan.textContent = avgEase.toFixed(1);
+        combinedSpan.textContent = combined.toFixed(1);
     });
-    </script>
+}
+
+// Search
+document.getElementById("searchBox").addEventListener("input", () => {
+    const query = document.getElementById("searchBox").value.toLowerCase();
+    const filtered = flpData.filter(row =>
+        (row.Title && row.Title.toLowerCase().includes(query)) ||
+        (row.Creator && row.Creator.toLowerCase().includes(query)) ||
+        (row.Plugins && row.Plugins.toLowerCase().includes(query))
+    );
+    displayData(filtered);
+});
+
+loadData();
+</script>
 </body>
 </html>
-
