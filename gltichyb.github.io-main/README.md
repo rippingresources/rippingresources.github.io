@@ -1,1 +1,0 @@
-# gltichyb.github.io
