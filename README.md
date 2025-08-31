@@ -1,0 +1,1 @@
+# rippingresources.github.io
