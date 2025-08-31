@@ -221,7 +221,7 @@
                 <p>Notes: ${row.notes || ""}</p>
                 <a href="${row.Link}" target="_blank">Download</a>
                 <div class="rating">
-                    <span>Rate:</span>
+                    <span>Rate Accuracy:</span>
                     ${[...Array(11).keys()].map(n => `<button class="rate-btn" data-value="${n}">${n}</button>`).join('')}
                     <span class="avg-score">0</span>
                 </div>
@@ -251,3 +251,4 @@
     </script>
 </body>
 </html>
+
