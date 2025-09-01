@@ -51,3 +51,25 @@ body {
 	font-weight: bold;
 	text-decoration: none;
 }
+
+.site-description {
+	font-size: 1.2rem;
+	text-align: center;
+	color: #cce7e0;
+	margin-top: -15px; /* pulls it closer to the title if you want */
+	margin-bottom: 40px;
+}
+
+#flp-list {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 24px;
+	padding: 40px;
+	background-color: #0f1524;
+	border-radius: 20px;
+	box-shadow: 0 8px 25px rgb(255, 255, 255);
+	max-width: 1200px; 
+	margin: 0 auto;    
+	border: 2px solid #dbebe8;
+}
