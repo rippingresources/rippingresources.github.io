@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>RR Archive</title>
+<title>RR Archive - Fire Rating</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 body { font-family: 'Inter', Arial, sans-serif; margin: 0; background-color: #0d1f1a; color: #e6f4ea; min-height: 100vh; }
@@ -34,7 +34,7 @@ h1 { text-align: center; margin-bottom: 30px; font-size: 2.2rem; color: #ffffff;
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, collection, onSnapshot, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyA0wO3s4xKCiyTF_cFjSEZGFvFuG4Ofa0o",
@@ -99,13 +99,26 @@ function displayData(data) {
     });
 }
 
-// Attach rating logic
-function attachRatingHandlers(cardEl, projectId) {
+// Attach rating logic with persisted votes
+async function attachRatingHandlers(cardEl, projectId) {
     const ratingDivs = cardEl.querySelectorAll('.rating');
+    const accuracySpan = cardEl.querySelector('.accuracy-score');
+    const easeSpan = cardEl.querySelector('.ease-score');
+    const combinedSpan = cardEl.querySelector('.combined-score');
+
+    // Get user's previous votes for this project
+    const userRef = doc(db, 'ratings', projectId, 'userRatings', auth.currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    let userVotes = {};
+    if (userSnap.exists()) userVotes = userSnap.data();
+
     ratingDivs.forEach(ratingDiv => {
         const fires = ratingDiv.querySelectorAll('.fire');
         const field = ratingDiv.dataset.field;
-        let currentValue = 0;
+        let currentValue = userVotes[field] || 0;
+
+        // Highlight initial vote
+        fires.forEach((f, idx) => f.classList.toggle('highlight', idx < currentValue));
 
         function updateHighlight(upTo) {
             fires.forEach((f, idx) => f.classList.toggle('highlight', idx < upTo));
@@ -116,35 +129,23 @@ function attachRatingHandlers(cardEl, projectId) {
             fire.addEventListener('click', async () => {
                 currentValue = idx + 1;
                 updateHighlight(currentValue);
-                await setDoc(doc(db, 'ratings', projectId, 'userRatings', auth.currentUser.uid), { [field]: currentValue }, { merge: true });
+                await setDoc(userRef, { [field]: currentValue }, { merge: true });
             });
             fire.addEventListener('mouseleave', () => updateHighlight(currentValue));
         });
     });
 
     // Update averages
-    const accuracySpan = cardEl.querySelector('.accuracy-score');
-    const easeSpan = cardEl.querySelector('.ease-score');
-    const combinedSpan = cardEl.querySelector('.combined-score');
-
     onSnapshot(collection(db, 'ratings', projectId, 'userRatings'), snap => {
-        if (snap.empty) {
-            accuracySpan.textContent = "0";
-            easeSpan.textContent = "0";
-            combinedSpan.textContent = "0";
-            return;
-        }
-
         let sumAccuracy = 0, sumEase = 0, countAccuracy = 0, countEase = 0;
         snap.docs.forEach(d => {
             const data = d.data();
             if (data.accuracy != null) { sumAccuracy += data.accuracy; countAccuracy++; }
             if (data.easeOfUse != null) { sumEase += data.easeOfUse; countEase++; }
         });
-
         const avgAccuracy = countAccuracy ? sumAccuracy / countAccuracy : 0;
         const avgEase = countEase ? sumEase / countEase : 0;
-        const combined = (avgAccuracy + avgEase) / (countAccuracy && countEase ? 2 : 1);
+        const combined = (avgAccuracy + avgEase) / ((countAccuracy && countEase) ? 2 : 1);
 
         accuracySpan.textContent = avgAccuracy.toFixed(1);
         easeSpan.textContent = avgEase.toFixed(1);
@@ -167,4 +168,3 @@ loadData();
 </script>
 </body>
 </html>
-
