@@ -27,38 +27,69 @@ async function loadData() {
     displayData(flpData);
 }
 
+// Got lazy... lol
+// stolen from https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url/43467144#43467144
+function isValidHttpUrl(string) {
+    let url;
+
+    try {
+        url = new URL(string);
+    } catch (_) {
+        return false;
+    }
+
+    return url.protocol === "http:" || url.protocol === "https:";
+}
+
+function makeCard(row) {
+    var html = "";
+
+    html += `<h2 title="${row.Title || "Untitled"}">${row.Title || "Untitled"}</h2>\n`
+    html += `<p title="${row.Creator || "Unknown"}">Creator: ${row.Creator || "Unknown"}</p>\n`
+    html += `<p>DAW: ${row['DAW version'] || "Unknown"}</p>\n`
+    html += `<p>Plugins: ${row.Plugins || "None"}</p>\n`
+    html += `<p>Notes:</p>\n<textarea class="notes">${row.notes || ""}</textarea>\n`
+
+    //Check Download Link
+    if (isValidHttpUrl(row.Link)) {
+        html += `<b><a href="${row.Link}" target="_blank" class="download">Download</a></b>\n`
+    } else {
+        html += `<a target="_blank" class="download unavailable">Download</a>\n`
+    }
+
+    //Rating's system
+    html += `
+    <div class="rating-container">
+    <div class="rating" data-field="accuracy">
+    <span>Accuracy:</span>
+    ${[1,2,3,4,5].map(n => `<img src="/assets/Images/Fire.svg" class="fire" data-value="${n}">`).join('')}
+    <span class="avg-score accuracy-score">0</span>
+    </div>
+
+    <div class="rating" data-field="easeOfUse">
+    <span>Ease of Use:</span>
+    ${[1,2,3,4,5].map(n => `<img src="/assets/Images/Fire.svg" class="fire" data-value="${n}">`).join('')}
+    <span class="avg-score ease-score">0</span>
+    </div>
+
+    <p>Combined: <span class="avg-score combined-score">0</span></p>
+    </div>
+    `
+
+
+    return html;
+}
+
 // Display cards
 function displayData(data) {
     const container = document.getElementById("flp-list");
-    container.innerHTML = "";
+    //container.innerHTML = "";
     data.forEach((row, idx) => {
         if (!row.Title) return;
 
         const div = document.createElement("div");
         div.className = "card";
-
-        div.innerHTML = `
-        <h2>${row.Title}</h2>
-        <p>Creator: ${row.Creator}</p>
-        <p>DAW version: ${row['DAW version']}</p>
-        <p>Plugins: ${row.Plugins}</p>
-        <p>Notes: ${row.notes || ""}</p>
-        <a href="${row.Link}" target="_blank">Download</a>
-
-        <div class="rating" data-field="accuracy">
-        <span>Accuracy:</span>
-        ${[1,2,3,4,5].map(n => `<img src="/assets/Images/Fire.svg" class="fire" data-value="${n}">`).join('')}
-        <span class="avg-score accuracy-score">0</span>
-        </div>
-
-        <div class="rating" data-field="easeOfUse">
-        <span>Ease of Use:</span>
-        ${[1,2,3,4,5].map(n => `<img src="/assets/Images/Fire.svg" class="fire" data-value="${n}">`).join('')}
-        <span class="avg-score ease-score">0</span>
-        </div>
-
-        <p>Combined: <span class="avg-score combined-score">0</span></p>
-        `;
+        div.innerHTML = makeCard(row);
         container.appendChild(div);
 
         attachRatingHandlers(div, `flp-${idx}`);

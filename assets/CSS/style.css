@@ -1,9 +1,14 @@
 /* General layout */
 body {
+	font-family: 'Inter',
+	Arial, sans-serif;
 	margin: 0;
-	font-family: Arial, sans-serif;
-	background-color: #1a1a2e;  /* Dark blue background */
-	color: #ffffff;              
+	background: radial-gradient(circle,#3135FC 0%, #191C7F 100%);
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-size: cover;
+	background-attachment: fixed;
+	color: #e6f4ea;
 	min-height: 100vh;
 }
 
@@ -40,8 +45,14 @@ body {
 
 .card h2 {
 	font-size: 1.3rem;
-	margin-bottom: 10px;
-	color: #21e6c1;  /* Neon green titles */
+	margin: 0 0 0 0;
+	color: #21e6c1;
+	border-bottom: solid;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	max-height: 30px;
+	max-width: 280px;
 }
 
 .card a {
@@ -50,6 +61,14 @@ body {
 	color: #21e6c1;  /* Neon green for links */
 	font-weight: bold;
 	text-decoration: none;
+}
+
+.card p {
+	margin: 6px 0;
+	max-width: 280px;
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
 }
 
 .site-description {
@@ -74,9 +93,24 @@ body {
 	border: 2px solid #dbebe8;
 }
 
-.scanlines {
-	-webkit-mask-image: url(/assets/Images/Lines.png);
-	mask-image: url(/assets/Images/Lines.png);
+.notes {
+	resize: none;
+	width: 97%;
+	height: 60px;
+}
+
+.download {
+	width: 97%;
+	text-align: center;
+	border: solid;
+	border-radius: 10px;
+}
+
+.download.unavailable {
+	color: gray;
+}
+
+#background-pattern {
 	mask-repeat: repeat;
 	opacity: .15;
 	height: 200%;
@@ -87,6 +121,17 @@ body {
 	animation: scrolling-anim 6s infinite linear;
 	top: -200px;
 	left: -200px;
+}
+
+.scanlines {
+	-webkit-mask-image: url(/assets/Images/Lines.png);
+	mask-image: url(/assets/Images/Lines.png);
+	z-index: -1;
+}
+
+.stripes {
+	-webkit-mask-image: url(/assets/Images/Stripes.png);
+	mask-image: url(/assets/Images/Stripes.png);
 	z-index: -1;
 }
 
