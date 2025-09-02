@@ -75,7 +75,7 @@ body {
 }
 
 .scanlines {
-	-webkit-mask-image: url(http://bopimod.com/Files/Images/Patterns/Checkerboard.png);
+	-webkit-mask-image: url(/assets/Images/Lines.png);
 	mask-image: url(/assets/Images/Lines.png);
 	mask-repeat: repeat;
 	opacity: .15;
@@ -91,16 +91,27 @@ body {
 }
 
 .silhouette {
-	-webkit-mask-image: url(http://bopimod.com/Files/Images/Patterns/Checkerboard.png);
+	-webkit-mask-image: url(/assets/Images/Meat.png);
 	mask-image: url(/assets/Images/Meat.png);
 	mask-repeat: no-repeat;
 	mask-size: auto 100%;
 	mask-position: center;
-	opacity: .15;
+	opacity: .05;
 	height: 100%;
 	width: 100%;
-	background-color: white;
+	background-color: black;
 	position: fixed;
+	/*animation: scrolling-anim 6s infinite linear;*/
+	z-index: -2;
+}
+
+.silhouette-img {
+	opacity: .08;
+	height: 100%;
+	position: fixed;
+	transform: translate(-50%, -50%);
+	top: 50%;
+	left: 50%;
 	/*animation: scrolling-anim 6s infinite linear;*/
 	z-index: -2;
 }
