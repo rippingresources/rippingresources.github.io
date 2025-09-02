@@ -73,3 +73,40 @@ body {
 	margin: 0 auto;    
 	border: 2px solid #dbebe8;
 }
+
+.scanlines {
+	-webkit-mask-image: url(http://bopimod.com/Files/Images/Patterns/Checkerboard.png);
+	mask-image: url(/assets/Images/Lines.png);
+	mask-repeat: repeat;
+	opacity: .15;
+	height: 200%;
+	width: 200%;
+	background-color: black;
+	position: fixed;
+	mask-position: 0 0;
+	animation: scrolling-anim 6s infinite linear;
+	top: -200px;
+	left: -200px;
+	z-index: -1;
+}
+
+.silhouette {
+	-webkit-mask-image: url(http://bopimod.com/Files/Images/Patterns/Checkerboard.png);
+	mask-image: url(/assets/Images/Meat.png);
+	mask-repeat: no-repeat;
+	mask-size: auto 100%;
+	mask-position: center;
+	opacity: .15;
+	height: 100%;
+	width: 100%;
+	background-color: white;
+	position: fixed;
+	/*animation: scrolling-anim 6s infinite linear;*/
+	z-index: -2;
+}
+
+@keyframes scrolling-anim {
+	100% {
+		mask-position: 0px -250px;
+	}
+}
