@@ -7,6 +7,10 @@ body {
 	min-height: 100vh;
 }
 
+button:hover {
+	cursor: pointer;
+}
+
 /* Cards & elements */
 .card {
 	flex: 0 1 280px;
@@ -114,6 +118,19 @@ body {
 	left: 50%;
 	/*animation: scrolling-anim 6s infinite linear;*/
 	z-index: -2;
+}
+
+#mute {
+	position: fixed;
+	bottom: 1%;
+	left: 1%;
+	width: 4rem;
+	height: 4rem;
+	background: transparent;
+	backdrop-filter: blur(3px) brightness(0.6);
+	color: white;
+	border: none;
+	border-radius: 5px;
 }
 
 @keyframes scrolling-anim {
