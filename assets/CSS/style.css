@@ -1,7 +1,7 @@
 /* Vars */
 * {
 	--main-color: #3135FC;
-	--main-color-dark: hsl(from var(--main-color) h s calc(l - 35));
+	--main-color-dark: hsl(from var(--main-color) h s calc(l - 30));
 }
 
 /* General layout */
