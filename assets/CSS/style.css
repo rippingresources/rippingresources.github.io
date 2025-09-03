@@ -1,9 +1,15 @@
+/* Vars */
+* {
+	--main-color: #3135FC;
+	--main-color-dark: hsl(from var(--main-color) h s calc(l - 35));
+}
+
 /* General layout */
 body {
 	font-family: 'Inter',
 	Arial, sans-serif;
 	margin: 0;
-	background: radial-gradient(circle,#3135FC 0%, #191C7F 100%);
+	background: radial-gradient(circle,var(--main-color) 0%, var(--main-color-dark) 100%);
 	background-repeat: no-repeat;
 	background-position: center center;
 	background-size: cover;
