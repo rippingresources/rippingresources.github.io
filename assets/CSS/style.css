@@ -13,6 +13,11 @@ body {
 }
 
 /* Cards & elements */
+.container {
+	margin: 0 5%;
+	padding: 40px 20px;
+}
+
 .card {
 	flex: 0 1 280px;
 	background-color: #162447;  
@@ -82,21 +87,21 @@ body {
 #flp-list {
 	display: flex;
 	flex-wrap: wrap;
-	justify-content: center;
+	justify-content: space-evenly;
 	gap: 24px;
 	padding: 40px;
-	background-color: #0f1524;
-	border-radius: 20px;
-	box-shadow: 0 8px 25px rgb(255, 255, 255);
-	max-width: 1200px; 
-	margin: 0 auto;    
-	border: 2px solid #dbebe8;
+	margin: 0 auto;
 }
 
 .notes {
 	resize: none;
-	width: 97%;
+	width: -webkit-fill-available;
+	width: -moz-available;
 	height: 60px;
+	box-shadow: inset 0px 0px 10px rgb(0, 0, 0);
+	background: #fff;
+	padding: 5px 5px;
+	color: black;
 }
 
 .download {
@@ -110,29 +115,45 @@ body {
 	color: gray;
 }
 
-#background-pattern {
+/* BG Stuff */
+
+.background-pattern {
 	mask-repeat: repeat;
 	opacity: .15;
 	height: 200%;
 	width: 200%;
 	background-color: black;
-	position: fixed;
 	mask-position: 0 0;
-	animation: scrolling-anim 6s infinite linear;
+	z-index: -1;
+}
+
+#scanlines {
+	-webkit-mask-image: url(/assets/Images/Lines.png);
+	mask-image: url(/assets/Images/Lines.png);
+	animation: scanlines 0.1s infinite linear;
+	position: fixed;
 	top: -200px;
 	left: -200px;
 }
 
-.scanlines {
-	-webkit-mask-image: url(/assets/Images/Lines.png);
-	mask-image: url(/assets/Images/Lines.png);
-	z-index: -1;
-}
-
-.stripes {
+#stripes {
 	-webkit-mask-image: url(/assets/Images/Stripes.png);
 	mask-image: url(/assets/Images/Stripes.png);
-	z-index: -1;
+	mask-size: 250px 250px;
+	animation: scrolling-stripes 12s infinite linear;
+	position: fixed;
+	top: -200px;
+	left: -200px;
+}
+
+#checkerboard {
+	height: 100%;
+	width: 100%;
+	background-color: #fff;
+	mask-image: url(/assets/Images/Checkerboard.png);
+	mask-size: 200px 200px;
+	background-color: white;
+	animation: test 6s infinite linear;
 }
 
 .silhouette {
@@ -151,7 +172,7 @@ body {
 }
 
 .silhouette-img {
-	opacity: .08;
+	opacity: .1;
 	height: 100%;
 	position: fixed;
 	transform: translate(-50%, -50%);
@@ -161,8 +182,37 @@ body {
 	z-index: -2;
 }
 
-@keyframes scrolling-anim {
+#list-container {
+	background-color: revert-layer;
+	backdrop-filter: blur(3px) brightness(2);
+	display: grid;
+	border-radius: 20px;
+	overflow: clip;
+	border: 2px solid #dbebe8;
+	box-shadow: 0 0px 25px rgb(255, 255, 255);
+}
+
+#list-container * {
+	grid-area: 1 / 1;
+}
+
+
+/* Animations */
+
+@keyframes scrolling-stripes {
 	100% {
 		mask-position: 0px -250px;
+	}
+}
+
+@keyframes test {
+	100% {
+		mask-position: 200px -200px;
+	}
+}
+
+@keyframes scanlines {
+	100% {
+		mask-position: 0px -3px;
 	}
 }

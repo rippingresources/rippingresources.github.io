@@ -11,14 +11,9 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap"" rel="stylesheet">
 <style>
-.container {
-    max-width: 1200px; margin: 0 auto; padding: 40px 20px;
-}
-
 h1 { font-family: 'Freckle Face', cursive; text-align: center; margin-bottom: 30px; font-size: 4.4rem; color: #ffffff; text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);}
 .search-container { display: flex; justify-content: center; margin-bottom: 40px; }
 #searchBox { width: 320px; padding: 12px 16px; border-radius: 10px; border: none; outline: none; font-size: 1rem; box-shadow: 0 3px 8px rgba(0,0,0,0.5); background-color: #162447; color: #ffffff; }
-#flp-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 24px; padding: 40px; background-color: #0f1524; border-radius: 20px; box-shadow: 0 8px 25px rgb(255, 255, 255); max-width: 1200px; margin: 0 auto; border: 2px solid #dbebe8;}
 .card { flex: 0 1 500px; background-color: #162447; padding: 20px; border-radius: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); text-align: left; color: #ffffff; }
 .card a { display: inline-block; margin-top: 10px; color: #28a745; font-weight: bold; text-decoration: none; }
 .rating { margin-top: 10px; }
@@ -34,8 +29,8 @@ h1 { font-family: 'Freckle Face', cursive; text-align: center; margin-bottom: 30
 </head>
 <body>
 <img class="silhouette-img" src="/assets/Images/Meat.png"></div>
-<div class="scanlines" id="background-pattern"></div>
-<div class="stripes" id="background-pattern"></div>
+<div id="scanlines" class="background-pattern"></div>
+<div id="stripes" class="background-pattern"></div>
 
 <div class="container">
 <h1>Ripping Resources FLP Archive</h1>
@@ -44,8 +39,11 @@ h1 { font-family: 'Freckle Face', cursive; text-align: center; margin-bottom: 30
 <div class="search-container">
     <input type="text" id="searchBox" placeholder="Search FLPs...">
 </div>
-<div id="flp-list">
-<div id="bg-pattern"></div>
+<div id="list-container">
+    <div id="checkerboard" class="background-pattern"></div>
+    <div id="flp-list">
+    <h2 style="text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);">Loading...</h2>
+    </div>
 </div>
 </div>
 </body>

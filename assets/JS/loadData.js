@@ -48,7 +48,7 @@ function makeCard(row) {
     html += `<p title="${row.Creator || "Unknown"}">Creator: ${row.Creator || "Unknown"}</p>\n`
     html += `<p>DAW: ${row['DAW version'] || "Unknown"}</p>\n`
     html += `<p>Plugins: ${row.Plugins || "None"}</p>\n`
-    html += `<p>Notes:</p>\n<textarea class="notes">${row.notes || ""}</textarea>\n`
+    html += `<p>Notes:</p>\n<textarea disabled class="notes">${row.notes || ""}</textarea>\n`
 
     //Check Download Link
     if (isValidHttpUrl(row.Link)) {
@@ -83,7 +83,7 @@ function makeCard(row) {
 // Display cards
 function displayData(data) {
     const container = document.getElementById("flp-list");
-    //container.innerHTML = "";
+    container.innerHTML = "";
     data.forEach((row, idx) => {
         if (!row.Title) return;
 
