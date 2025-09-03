@@ -58,7 +58,7 @@ h1 {
 .card {
 	flex: 0 1 280px;
 	background-color: #162447;  
-	padding: 20px;
+	padding: 15px 20px;
 	border-radius: 14px;
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
 	text-align: left;
@@ -114,7 +114,7 @@ h1 {
 
 .card h2 {
 	font-size: 1.3rem;
-	margin: 0 0 0 0;
+	margin: 0 0 8px 0;
 	color: #21e6c1;
 	border-bottom: solid;
 	text-overflow: ellipsis;
