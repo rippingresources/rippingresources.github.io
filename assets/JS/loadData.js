@@ -48,11 +48,14 @@ function makeCard(row) {
     html += `<p title="${row.Creator || "Unknown"}">Creator: ${row.Creator || "Unknown"}</p>\n`
     html += `<p>DAW: ${row['DAW version'] || "Unknown"}</p>\n`
     html += `<p>Plugins: ${row.Plugins || "None"}</p>\n`
-    html += `<p>Notes:</p>\n<textarea disabled class="notes">${row.notes || ""}</textarea>\n`
+
+    if (row.notes.length !== 0) {
+        html += `<p>Notes:</p>\n<textarea disabled class="notes">${row.notes || ""}</textarea>\n`
+    }
 
     //Check Download Link
     if (isValidHttpUrl(row.Link)) {
-        html += `<b><a href="${row.Link}" target="_blank" class="download">Download</a></b>\n`
+        html += `<a href="${row.Link}" target="_blank" class="download">Download</a>\n`
     } else {
         html += `<a target="_blank" class="download unavailable">Download</a>\n`
     }
@@ -60,19 +63,25 @@ function makeCard(row) {
     //Rating's system
     html += `
     <div class="rating-container">
+
     <div class="rating" data-field="accuracy">
     <span>Accuracy:</span>
+    <div class="fire-container">
     ${[1,2,3,4,5].map(n => `<img src="/assets/Images/Fire.svg" class="fire" data-value="${n}">`).join('')}
-    <span class="avg-score accuracy-score">0</span>
+    <span class="avg-score accuracy-score">0.0</span>
+    </div>
     </div>
 
     <div class="rating" data-field="easeOfUse">
     <span>Ease of Use:</span>
+    <div class="fire-container">
     ${[1,2,3,4,5].map(n => `<img src="/assets/Images/Fire.svg" class="fire" data-value="${n}">`).join('')}
-    <span class="avg-score ease-score">0</span>
+    <span class="avg-score ease-score">0.0</span>
+    </div>
     </div>
 
-    <p>Combined: <span class="avg-score combined-score">0</span></p>
+    <!-- Im being lazy... Remind me to make proper classes for these -->
+    <p style ="margin-top: 10px; margin-bottom: 0;">Combined: <span style="float: right;" class="avg-score combined-score">0.0</span></p>
     </div>
     `
 
@@ -92,7 +101,7 @@ function displayData(data) {
         div.innerHTML = makeCard(row);
         container.appendChild(div);
 
-        attachRatingHandlers(div, `flp-${idx}`);
+        attachRatingHandlers(div, `flp-${row.Id}`);
     });
 }
 
@@ -110,7 +119,7 @@ async function attachRatingHandlers(cardEl, projectId) {
     if (userSnap.exists()) userVotes = userSnap.data();
 
     ratingDivs.forEach(ratingDiv => {
-        const fires = ratingDiv.querySelectorAll('.fire');
+        const fires = ratingDiv.querySelectorAll('.fire-container')[0].querySelectorAll('.fire');
         const field = ratingDiv.dataset.field;
         let currentValue = userVotes[field] || 0;
 
