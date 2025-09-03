@@ -184,6 +184,20 @@ h1 {
 	color: gray;
 }
 
+/* Music Player Stuff */
+#mute {
+	position: fixed;
+	bottom: 1%;
+	left: 1%;
+	width: 4rem;
+	height: 4rem;
+	background: transparent;
+	backdrop-filter: blur(3px) brightness(0.6);
+	color: white;
+	border: none;
+border-radius: 5px;
+}
+
 /* BG Stuff */
 
 .background-pattern {
