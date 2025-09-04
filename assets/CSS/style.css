@@ -195,7 +195,29 @@ h1 {
 	backdrop-filter: blur(3px) brightness(0.6);
 	color: white;
 	border: none;
-border-radius: 5px;
+	border-radius: 5px;
+}
+
+#audioPlayer {
+	position: fixed;
+	top: 1%;
+	right: 1%;
+	/*
+	width: 4rem;
+	height: 4rem;
+	background: transparent;
+	backdrop-filter: blur(3px) brightness(0.6);
+	*/
+	color: white;
+	border: solid 5px;
+	border-radius: 5px;
+	padding: 15px;
+	transition: width ease-out;
+	z-index: 1;
+}
+
+#audioPlayer #song-title {
+	margin: 0;
 }
 
 /* BG Stuff */
