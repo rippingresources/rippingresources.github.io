@@ -20,7 +20,7 @@ let flpData = [];
 
 // Load CSV data
 async function loadData() {
-    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LKv2QcODF4I3v6H7EJ5PYBzmtF8Vt_oa6iCLTUzb9iDF3jIF8W3fJzqgBXAvlz1DYOD22TlCbMDL/pub?output=csv";
+    const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LKv2QcODF4I3v6H7EJ5PYBzmtF8Vt_oa6iCLTUzb9iDF3jIF8W3fJzqgBXAvlz1DYOD22TlCbMDL/pub?output=csv&gid=1604710042";
     const res = await fetch(url);
     const csv = await res.text();
     flpData = Papa.parse(csv, { header: true }).data;
