@@ -1,43 +1,65 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
-<!-- Favicons -->
-<link rel="icon" type="image/png" href="/assets/Images/Favicons/favicon_64.png" sizes="64x64" />
-<!--link rel="icon" type="image/svg+xml" href="/assets/Images/Favicons/favicon.svg" /-->
-<link rel="shortcut icon" href="/favicon.ico" />
+	<head>
+		<meta charset="utf8">
+		<!-- Primary Meta Tags -->
+        <meta property="og:title" content="Ripping Resources FLP Archive">
+        <meta property="og:description" content="A community archive of project files from the Ripping Resources Discord server, a server for posting resources related to music recreating and ripping.">
+        <meta property="og:url" content="https://archive.resources.rip">
+        <meta property="og:image" content="https://archive.resources.rip/assets/Images/RRFLPA_Cover_512.jpg">
+        <meta charset="utf8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="date" content="Nov 3, 2025">
+        <meta name="theme-color" content="#3135FC">
 
-<title>RR Archive</title>
+        <!-- Open Graph / Facebook -->
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://archive.resources.rip">
+        <meta property="og:title" content="Ripping Resources FLP Archive">
+        <meta property="og:description" content="A community archive of project files from the Ripping Resources Discord server, a server for posting resources related to music recreating and ripping.">
+        <meta property="og:image" content="https://archive.resources.rip/assets/Images/RRFLPA_Cover_512.jpg">
 
-<link href="https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap"" rel="stylesheet">
-<link rel="stylesheet" href="/assets/CSS/style.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="/assets/JS/loadData.js" type="module"></script>
-<script src="/assets/JS/audioManager.js" type="module"></script>
-</head>
-<body>
-<img class="silhouette-img" src="/assets/Images/Meat.png"></div>
-<div id="scanlines" class="background-pattern"></div>
-<div id="stripes" class="background-pattern"></div>
-<audio id="bgm" preload="auto" loop="true">
-    <source src="/assets/Audio/Placeholder.ogg"></source>
-</audio>
-<div class="container">
-<h1>Ripping Resources FLP Archive</h1>
-<p class="site-description">A community archive of project files from the Ripping Resources Discord server, a server for posting resources related to music recreating and ripping.
-<p class="site-description"><b>Contributors: GlitchyB, Hatsune Miku (NateTheGrate), WindowsOnAMac (Lanausse)</b>
-<div class="search-container">
-    <input type="text" id="searchBox" placeholder="Search FLPs...">
-</div>
-<div id="list-container">
-    <div id="checkerboard" class="background-pattern"></div>
-    <div id="flp-list">
-    <h2 style="text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);">Loading...</h2>
-    </div>
-</div>
-</div>
-<!-- Temporary -->
-<button id="mute">Toggle Music</button>
-</body>
+        <!-- Twitter -->
+        <meta property="twitter:card" content="summary_large_image">
+        <meta property="twitter:url" content="https://archive.resources.rip">
+        <meta property="twitter:title" content="Ripping Resources FLP Archive">
+        <meta property="twitter:description" content="A community archive of project files from the Ripping Resources Discord server, a server for posting resources related to music recreating and ripping.">
+        <meta property="twitter:image" content="https://archive.resources.rip/assets/Images/RRFLPA_Cover_512.jpg">
+
+
+		<!-- Favicons -->
+		<link rel="icon" type="image/png" href="/assets/Images/Favicons/favicon_64.png" sizes="64x64" />
+		<!--link rel="icon" type="image/svg+xml" href="/assets/Images/Favicons/favicon.svg" /-->
+		<link rel="shortcut icon" href="/favicon.ico" />
+
+
+		<title>RR Archive</title>
+		<link href="https://fonts.googleapis.com/css2?family=Freckle+Face&display=swap"" rel="stylesheet">
+		<link rel="stylesheet" href="/assets/CSS/style.css">
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+		<script src="/assets/JS/loadData.js" type="module"></script>
+    <script src="/assets/JS/audioManager.js" type="module"></script>
+	</head>
+	<body>
+		<img class="silhouette-img" src="/assets/Images/Meat.png"></div>
+		<div id="scanlines" class="background-pattern"></div>
+		<div id="stripes" class="background-pattern"></div>
+		<div class="container">
+			<h1>Labubu Resources FLP Archive</h1>
+			<p class="site-description">A community archive of project files from the Ripping Resources Discord server, a server for posting resources related to music recreating and ripping.</p>
+			<p class="site-description"><b>Contributors: GlitchyB, Hatsune Miku (NateTheGrate), WindowsOnAMac (Lanausse)</b></p>
+			<div class="search-container">
+				<input type="text" id="searchBox" placeholder="Search FLPs...">
+			</div>
+			<div id="list-container">
+				<div id="checkerboard" class="background-pattern"></div>
+				<div id="flp-list">
+					<h2 style="text-shadow: 5px 5px 5px rgba(0, 0, 0, 0.5);">Loading...</h2>
+				</div>
+			</div>
+		</div>
+    <!-- Temporary -->
+    <button id="mute">Toggle Music</button>
+	</body>
 </html>
