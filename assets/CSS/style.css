@@ -199,7 +199,7 @@ h1 {
 #scanlines {
 	-webkit-mask-image: url(/assets/Images/Lines.png);
 	mask-image: url(/assets/Images/Lines.png);
-	animation: scanlines 0.1s infinite linear;
+	/*animation: scanlines 0.1s infinite linear;*/
 	position: fixed;
 	top: -200px;
 	left: -200px;
@@ -221,8 +221,8 @@ h1 {
 	background-color: #fff;
 	mask-image: url(/assets/Images/Checkerboard.png);
 	mask-size: 200px 200px;
-	background-color: white;
 	animation: test 6s infinite linear;
+	opacity: .5;
 }
 
 .silhouette {
@@ -253,7 +253,8 @@ h1 {
 
 #list-container {
 	background-color: revert-layer;
-	backdrop-filter: blur(3px) brightness(2);
+	/*backdrop-filter: blur(3px) brightness(2);*/
+	background-color: #1E22FAC0;
 	display: grid;
 	border-radius: 20px;
 	overflow: clip;
