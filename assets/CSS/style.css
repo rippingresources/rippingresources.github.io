@@ -221,8 +221,8 @@ h1 {
 	background-color: #fff;
 	mask-image: url(/assets/Images/Checkerboard.png);
 	mask-size: 200px 200px;
-	background-color: white;
 	animation: test 6s infinite linear;
+	opacity: .5;
 }
 
 .silhouette {
