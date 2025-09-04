@@ -254,7 +254,7 @@ h1 {
 #list-container {
 	background-color: revert-layer;
 	/*backdrop-filter: blur(3px) brightness(2);*/
-	background-color: #1E22FAC0;
+	background-color: hsla(from var(--main-color) h calc(s + 30) l / 50%);
 	display: grid;
 	border-radius: 20px;
 	overflow: clip;
