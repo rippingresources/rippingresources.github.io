@@ -183,6 +183,7 @@ h1 {
 
 .download.unavailable {
 	color: gray;
+	cursor: not-allowed;
 }
 
 /* Music Player Stuff */
