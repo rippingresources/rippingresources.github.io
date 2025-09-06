@@ -45,7 +45,7 @@ $(document).ready(async function(){
         });
     }
 
-    await sleep(1000);
+    await sleep(1000); //Hacky but it works
     //Audio Preview Event Listener
     $(".audio-preview audio").each(function(){
         $(this).on('play', previewPlaying)
@@ -77,12 +77,12 @@ async function displayTrack(bgm) {
         ]
     });
 
-    $("#song-title").text(`${bgm.title} - ${bgm.author}`);
+    $("#song-title p").text(`${bgm.title} - ${bgm.author}`);
     $("#audioPlayer").css('right', '1%');
     await sleep(8000);
     $("#audioPlayer").css('right', '-80%');
     await sleep(500);
-    $("#song-title").hide();
+    $("#song-title p").hide();
     $("#song-title").css('padding', '3px 0 0 2px')
     $("#audioPlayer").css('right', '0.5%');
     $("#mute").show();

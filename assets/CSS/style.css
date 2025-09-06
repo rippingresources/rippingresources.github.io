@@ -229,6 +229,10 @@ h1 {
 	grid-area: 1 / 1;
 }
 
+#song-title p {
+	margin: 0;
+}
+
 #offscreen {
 	height: calc(100%);
 	width: 150%;
