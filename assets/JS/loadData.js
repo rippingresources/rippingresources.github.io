@@ -45,21 +45,25 @@ function isValidHttpUrl(string) {
 
 function makeCard(row) {
     var html = "";
-
     html += `<h2 title="${row.Title || "Untitled"}">${row.Title || "Untitled"}</h2>\n`
     html += `<p title="${row.Creator || "Unknown"}">Creator: ${row.Creator || "Unknown"}</p>\n`
     html += `<p>DAW: ${row['DAW version'] || "Unknown"}</p>\n`
     html += `<p title="${row.Plugins || "None"}">Plugins: ${row.Plugins || "None"}</p>\n`
-
     if (row.notes.length !== 0) {
-        html += `<p>Notes:</p>\n<textarea disabled class="notes">${row.notes || ""}</textarea>\n`
+        html += `<textarea disabled class="notes">${row.notes || ""}</textarea>\n`
     }
 
+    //TODO: Better class names
+    html += '<div class="card-bottom">'
+    if (isValidHttpUrl(row.Preview)) {
+        html += `<div class="audio-preview"><audio preload="none" controls><source src="${row.Preview}"></audio></div>\n`
+    }
     if (isValidHttpUrl(row.Link)) {
         html += `<a href="${row.Link}" target="_blank" class="download">Download</a>\n`
     } else {
         html += `<a target="_blank" class="download unavailable">Download</a>\n`
     }
+    html += '</div>'
 
   
     html += `
