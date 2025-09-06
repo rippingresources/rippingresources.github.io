@@ -90,7 +90,6 @@ function makeCard(row) {
     </div>
     `
 
-
     return html;
 }
 

@@ -1,10 +1,13 @@
 //TODO: List music from previous days
 //TODO: Show song metadata
-//TODO: Mute BGM when playing preview
+//TODO: Code it a becoming a bit of a mess. Start refactoring thing soon.
 
 let hasClickedEver = false
 let notMuted = false
+let mutedByPreview = false
+let bgmVol = 0;
 const sheet = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT9AQJRlqMIk6MdjmW_-4pMoWrRZqY1tUJou5qbi5pbJTPDXa8yq-SPvC_90BbPUJChYfVhMMc1oHFt/pub?gid=1266918037&single=true&output=csv";
+var lastPreview;
 
 const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds));
@@ -31,7 +34,7 @@ $(document).ready(async function(){
     if (playResults !== undefined) {
         playResults.then(() => {
             initBGM(randomBgm)
-        }).catch((error) =>{
+        }).catch((error) => {
             $("html").click(function(){
                 if (!hasClickedEver) {
                     hasClickedEver = true
@@ -41,6 +44,13 @@ $(document).ready(async function(){
             });
         });
     }
+
+    await sleep(1000);
+    //Audio Preview Event Listener
+    $(".audio-preview audio").each(function(){
+        $(this).on('play', previewPlaying)
+        $(this).on('pause', previewPaused)
+    })
 });
 
 function initBGM(bgm) {
@@ -53,6 +63,8 @@ function initBGM(bgm) {
     } else {
         $("#bgm")[0].volume = 0
     }
+
+    bgmVol = bgm.initVol;
 }
 
 async function displayTrack(bgm) {
@@ -70,25 +82,53 @@ async function displayTrack(bgm) {
     await sleep(8000);
     $("#audioPlayer").css('right', '-80%');
     await sleep(500);
+    $("#song-title").hide();
     $("#song-title").css('padding', '3px 0 0 2px')
     $("#audioPlayer").css('right', '0.5%');
+    $("#mute").show();
 
     if (notMuted) {
-        $("#song-title").html('<img src="/assets/Images/unmuted.png" id="mute"></img>')
+        $("#mute").src = '/assets/Images/unmuted.png'
     } else {
-        $("#song-title").html('<img src="/assets/Images/muted.png" id="mute"></img>')
+        $("#mute").src = '/assets/Images/muted.png'
     }
 
+    //Mute
     $('#mute').click(function() {
-        if (notMuted) {
+        if (notMuted && mutedByPreview == false) {
             $("#bgm")[0].volume = 0;
             document.cookie = "muted=true";
             $('#mute')[0].src = "/assets/Images/muted.png"
         } else {
+            console.log("Unmuting")
             $("#bgm")[0].volume = bgm.initVol || 1;
             document.cookie = "muted=false";
             $('#mute')[0].src = "/assets/Images/unmuted.png"
+
+            if (mutedByPreview && lastPreview !== undefined) {
+                lastPreview.pause();
+                mutedByPreview = false;
+            }
         }
         notMuted = !notMuted
     });
 }
+
+// This is stupid
+function previewPlaying(event) {
+    mutedByPreview = true
+    console.log(event.target)
+    if (lastPreview !== undefined && lastPreview !== event.target) lastPreview.pause();
+    lastPreview = event.target;
+    $("#bgm")[0].volume = 0;
+    $('#mute')[0].src = "/assets/Images/muted.png"
+};
+
+function previewPaused(event) {
+    console.log(event.target)
+    if (lastPreview !== undefined && lastPreview.paused && notMuted && mutedByPreview == true) {
+        mutedByPreview = false
+        $("#bgm")[0].volume = bgmVol;
+        $('#mute')[0].src = "/assets/Images/unmuted.png"
+    }
+};
