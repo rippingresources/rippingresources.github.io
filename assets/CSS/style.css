@@ -127,7 +127,7 @@ h1 {
 
 .card a {
 	display: inline-block;
-	margin-top: 10px;
+	margin-top: 4px;
 	color: #21e6c1;  /* Neon green for links */
 	font-weight: bold;
 	text-decoration: none;
@@ -177,13 +177,22 @@ h1 {
 	border: solid;
 	border-radius: 10px;
 	font-weight: bold;
-	margin-top: auto !important;
-	margin-bottom: var(--download-margin);
 }
 
 .download.unavailable {
 	color: gray;
 	cursor: not-allowed;
+}
+
+/* TODO: Make a proper custom media player*/
+.audio-preview {
+	margin-left: -10px;
+	width: 0;
+}
+
+.card-bottom {
+	margin-top: auto !important;
+	margin-bottom: var(--download-margin);
 }
 
 /* Music Player Stuff */
@@ -218,6 +227,10 @@ h1 {
 	padding: 15px 15px 15px 15px;
 	text-shadow: 1px 1px 1px black;
 	grid-area: 1 / 1;
+}
+
+#song-title p {
+	margin: 0;
 }
 
 #offscreen {
