@@ -60,8 +60,10 @@ function initBGM(bgm) {
     if (getCookieValue('muted') != 'true') {
         $("#bgm")[0].volume = bgm.initVol || 1;
         notMuted = !notMuted
+        $("#mute")[0].src = '/assets/Images/unmuted.png'
     } else {
         $("#bgm")[0].volume = 0
+        $("#mute")[0].src = '/assets/Images/muted.png'
     }
 
     bgmVol = bgm.initVol;
