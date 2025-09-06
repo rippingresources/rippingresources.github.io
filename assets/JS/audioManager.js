@@ -1,8 +1,6 @@
-//TODO: Grab music from spreadsheet
 //TODO: List music from previous days
 //TODO: Show song metadata
-//TODO: Check cookies to see if the bgm should say muted on first click.
-//
+//TODO: Mute BGM when playing preview
 
 let hasClickedEver = false
 let notMuted = false
@@ -28,26 +26,45 @@ $(document).ready(async function(){
     let bgmData = await getData();
     console.log(bgmData, bgmData.length);
     let randomBgm = bgmData[Math.floor(Math.random()*bgmData.length)];
-    $("#bgm")[0].src = randomBgm.link;
+    var playResults = $("#bgm")[0].play()
 
-    $("html").click(function(){
-        if (!hasClickedEver) {
-            hasClickedEver = true
-            displayTrack(randomBgm);
-
-            if (getCookieValue('muted') != 'true') {
-                $("#bgm")[0].volume = randomBgm.initVol || 1;
-                notMuted = !notMuted
-            } else {
-                $("#bgm")[0].volume = 0
-            }
-
-            $("#bgm")[0].play();
-        }
-    });
+    if (playResults !== undefined) {
+        playResults.then(() => {
+            initBGM(randomBgm)
+        }).catch((error) =>{
+            $("html").click(function(){
+                if (!hasClickedEver) {
+                    hasClickedEver = true
+                    initBGM(randomBgm);
+                    $("#bgm")[0].play();
+                }
+            });
+        });
+    }
 });
 
+function initBGM(bgm) {
+    $("#bgm")[0].src = bgm.link;
+    displayTrack(bgm);
+
+    if (getCookieValue('muted') != 'true') {
+        $("#bgm")[0].volume = bgm.initVol || 1;
+        notMuted = !notMuted
+    } else {
+        $("#bgm")[0].volume = 0
+    }
+}
+
 async function displayTrack(bgm) {
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title: bgm.title,
+        artist: bgm.author,
+        album: "Ripping Resources FLP Archive",
+        artwork: [
+            { src: '/assets/Images/RRFLPA_Cover_512.jpg', sizes: '512x512', type: 'image/jpeg' },
+        ]
+    });
+
     $("#song-title").text(`${bgm.title} - ${bgm.author}`);
     $("#audioPlayer").css('right', '1%');
     await sleep(8000);
