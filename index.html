@@ -40,15 +40,22 @@
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 		<script src="/assets/JS/loadData.js" type="module"></script>
-    <script src="/assets/JS/audioManager.js" type="module"></script>
+		<script src="/assets/JS/audioManager.js" type="module"></script>
+		<script src="/assets/JS/animationsManager.js" type="module"></script>
 	</head>
 	<body>
 		<img class="silhouette-img" src="/assets/Images/Meat.png"></div>
 		<div id="scanlines" class="background-pattern"></div>
 		<div id="stripes" class="background-pattern"></div>
+
 		<div id="audioPlayer">
 			<div id="song-title"><img src="/assets/Images/unmuted.png" id="mute" style="display: none;"><p></p></div>
 			<audio id="bgm" preload="auto" loop="true" src="./assets/Audio/nothing.flac" autoplay></audio>
+			<div id="offscreen"></div>
+		</div>
+
+		<div id="animation-toggle">
+			<div id="song-title"><img src="/assets/Images/animationsEnabled.png" id="animations-button"></div>
 			<div id="offscreen"></div>
 		</div>
 
