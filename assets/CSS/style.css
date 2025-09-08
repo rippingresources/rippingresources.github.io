@@ -1,5 +1,5 @@
 /* Vars */
-* {
+:root {
 	--main-color: #3135FC;
 	--main-color-dark: hsl(from var(--main-color) h s calc(l - 30));
 	--main-color-darkest: hsl(from var(--main-color) h s calc(l - 50));
@@ -194,6 +194,12 @@ h1 {
 .card-bottom {
 	margin-top: auto !important;
 	margin-bottom: var(--download-margin);
+}
+
+#date {
+	color: gray;
+	font-size: 12px;
+	margin: 10px 0 -6px -10px;
 }
 
 /* Music Player Stuff */

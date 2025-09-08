@@ -48,7 +48,12 @@ function makeCard(row) {
     html += `<h2 title="${row.Title || "Untitled"}">${row.Title || "Untitled"}</h2>\n`
     html += `<p title="${row.Creator || "Unknown"}">Creator: ${row.Creator || "Unknown"}</p>\n`
     html += `<p>DAW: ${row['DAW version'] || "Unknown"}</p>\n`
-    html += `<p title="${row.Plugins || "None"}">Plugins: ${row.Plugins || "None"}</p>\n`
+    //TODO: Instead of a bunch of if statements, make a function
+
+    if (row.Plugins.length !== 0) {
+        html += `<p title="${row.Plugins}">Plugins: ${row.Plugins}</p>\n`
+    }
+
     if (row.notes.length !== 0) {
         html += `<textarea disabled class="notes">${row.notes || ""}</textarea>\n`
     }
@@ -65,7 +70,7 @@ function makeCard(row) {
     }
     html += '</div>'
 
-  
+    // Ratings
     html += `
     <div class="rating-container">
 
@@ -89,6 +94,27 @@ function makeCard(row) {
     <p style ="margin-top: 10px; margin-bottom: 0;">Combined: <span style="float: right;" class="avg-score combined-score">0.0</span></p>
     </div>
     `
+
+    // Date
+    let options = {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+        hour: 'numeric',
+        minute: 'numeric',
+        second: 'numeric'
+    };
+
+    var formattedDate = 'Unknown';
+
+    try {
+        formattedDate = new Intl.DateTimeFormat(navigator.language, options).format(new Date(row['Date (ISO 8601)']));
+    } catch (RangeError) {
+        console.log('Invalid or missing date')
+    }
+    
+
+    html += `<span id="date">${formattedDate}</span>`
 
     return html;
 }
