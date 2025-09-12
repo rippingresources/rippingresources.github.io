@@ -33,13 +33,11 @@ async function loadData() {
 // stolen from https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url/43467144#43467144 we all steal things from stack overflow
 function isValidHttpUrl(string) {
     let url;
-
     try {
         url = new URL(string);
     } catch (_) {
         return false;
     }
-
     return url.protocol === "http:" || url.protocol === "https:";
 }
 
@@ -49,7 +47,13 @@ function makeCard(row) {
     html += `<p title="${row.Creator || "Unknown"}">Creator: ${row.Creator || "Unknown"}</p>\n`
     html += `<p>DAW: ${row['DAW version'] || "Unknown"}</p>\n`
     html += `<p title="${row.Plugins || "None"}">Plugins: ${row.Plugins || "None"}</p>\n`
-    if (row.notes.length !== 0) {
+
+    // NEW: show category if present
+    if (row.Category) {
+        html += `<p class="category">Category: ${row.Category}</p>\n`;
+    }
+
+    if (row.notes && row.notes.length !== 0) {
         html += `<textarea disabled class="notes">${row.notes || ""}</textarea>\n`
     }
 
@@ -65,7 +69,6 @@ function makeCard(row) {
     }
     html += '</div>'
 
-  
     html += `
     <div class="rating-container">
 
@@ -111,75 +114,89 @@ function displayData(data) {
 
 // Attach rating logic with persisted votes
 async function attachRatingHandlers(cardEl, projectId) {
-	const ratingDivs = cardEl.querySelectorAll('.rating');
-	const accuracySpan = cardEl.querySelector('.accuracy-score');
-	const easeSpan = cardEl.querySelector('.ease-score');
-	const combinedSpan = cardEl.querySelector('.combined-score');
+    const ratingDivs = cardEl.querySelectorAll('.rating');
+    const accuracySpan = cardEl.querySelector('.accuracy-score');
+    const easeSpan = cardEl.querySelector('.ease-score');
+    const combinedSpan = cardEl.querySelector('.combined-score');
 
-	// Get user's previous votes for this project
-	const userRef = doc(db, 'ratings', projectId, 'userRatings', auth.currentUser.uid);
-	const userSnap = await getDoc(userRef);
-	let userVotes = {};
-	if (userSnap.exists()) userVotes = userSnap.data();
+    // Get user's previous votes for this project
+    const userRef = doc(db, 'ratings', projectId, 'userRatings', auth.currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    let userVotes = {};
+    if (userSnap.exists()) userVotes = userSnap.data();
 
-	ratingDivs.forEach(ratingDiv => {
-		const fires = ratingDiv.querySelectorAll('.fire-container')[0].querySelectorAll('.fire');
-		const field = ratingDiv.dataset.field;
-		let currentValue = userVotes[field] || 0;
+    ratingDivs.forEach(ratingDiv => {
+        const fires = ratingDiv.querySelectorAll('.fire-container')[0].querySelectorAll('.fire');
+        const field = ratingDiv.dataset.field;
+        let currentValue = userVotes[field] || 0;
 
-		// Highlight initial vote
-		fires.forEach((f, idx) => f.classList.toggle('highlight', idx < currentValue));
+        // Highlight initial vote
+        fires.forEach((f, idx) => f.classList.toggle('highlight', idx < currentValue));
 
-		function updateHighlight(upTo) {
-			fires.forEach((f, idx) => f.classList.toggle('highlight', idx < upTo));
-		}
+        function updateHighlight(upTo) {
+            fires.forEach((f, idx) => f.classList.toggle('highlight', idx < upTo));
+        }
 
-		fires.forEach((fire, idx) => {
-			fire.addEventListener('mouseenter', () => updateHighlight(idx + 1));
-			fire.addEventListener('click', async () => {
-				const clickedValue = idx + 1;
-				if (currentValue === clickedValue) {
-					// If user clicks same rating again -> remove their vote
-					currentValue = 0;
-					updateHighlight(0);
-					await setDoc(userRef, { [field]: deleteField() }, { merge: true });
-				} else {
-					currentValue = clickedValue;
-					updateHighlight(currentValue);
-					await setDoc(userRef, { [field]: currentValue }, { merge: true });
-				}
-			});
-			fire.addEventListener('mouseleave', () => updateHighlight(currentValue));
-		});
-	});
+        fires.forEach((fire, idx) => {
+            fire.addEventListener('mouseenter', () => updateHighlight(idx + 1));
+            fire.addEventListener('click', async () => {
+                const clickedValue = idx + 1;
+                if (currentValue === clickedValue) {
+                    // If user clicks same rating again -> remove their vote
+                    currentValue = 0;
+                    updateHighlight(0);
+                    await setDoc(userRef, { [field]: deleteField() }, { merge: true });
+                } else {
+                    currentValue = clickedValue;
+                    updateHighlight(currentValue);
+                    await setDoc(userRef, { [field]: currentValue }, { merge: true });
+                }
+            });
+            fire.addEventListener('mouseleave', () => updateHighlight(currentValue));
+        });
+    });
 
-	// Update averages
-	onSnapshot(collection(db, 'ratings', projectId, 'userRatings'), snap => {
-		let sumAccuracy = 0, sumEase = 0, countAccuracy = 0, countEase = 0;
-		snap.docs.forEach(d => {
-			const data = d.data();
-			if (data.accuracy != null) { sumAccuracy += data.accuracy; countAccuracy++; }
-			if (data.easeOfUse != null) { sumEase += data.easeOfUse; countEase++; }
-		});
-		const avgAccuracy = countAccuracy ? sumAccuracy / countAccuracy : 0;
-		const avgEase = countEase ? sumEase / countEase : 0;
-		const combined = (avgAccuracy + avgEase) / ((countAccuracy && countEase) ? 2 : 1);
+    // Update averages
+    onSnapshot(collection(db, 'ratings', projectId, 'userRatings'), snap => {
+        let sumAccuracy = 0, sumEase = 0, countAccuracy = 0, countEase = 0;
+        snap.docs.forEach(d => {
+            const data = d.data();
+            if (data.accuracy != null) { sumAccuracy += data.accuracy; countAccuracy++; }
+            if (data.easeOfUse != null) { sumEase += data.easeOfUse; countEase++; }
+        });
+        const avgAccuracy = countAccuracy ? sumAccuracy / countAccuracy : 0;
+        const avgEase = countEase ? sumEase / countEase : 0;
+        const combined = (avgAccuracy + avgEase) / ((countAccuracy && countEase) ? 2 : 1);
 
-		accuracySpan.textContent = avgAccuracy.toFixed(1);
-		easeSpan.textContent = avgEase.toFixed(1);
-		combinedSpan.textContent = combined.toFixed(1);
-	});
+        accuracySpan.textContent = avgAccuracy.toFixed(1);
+        easeSpan.textContent = avgEase.toFixed(1);
+        combinedSpan.textContent = combined.toFixed(1);
+    });
 }
 
-// Search
-document.getElementById("searchBox").addEventListener("input", () => {
+// 🔹 Unified filter for search + category
+function applyFilters() {
     const query = document.getElementById("searchBox").value.toLowerCase();
-    const filtered = flpData.filter(row =>
-    (row.Title && row.Title.toLowerCase().includes(query)) ||
-    (row.Creator && row.Creator.toLowerCase().includes(query)) ||
-    (row.Plugins && row.Plugins.toLowerCase().includes(query))
-    );
+    const category = document.getElementById("categoryFilter").value;
+
+    const filtered = flpData.filter(row => {
+        // search filter
+        const matchesSearch =
+            (row.Title && row.Title.toLowerCase().includes(query)) ||
+            (row.Creator && row.Creator.toLowerCase().includes(query)) ||
+            (row.Plugins && row.Plugins.toLowerCase().includes(query));
+
+        // category filter
+        const matchesCategory = !category || row.Category === category;
+
+        return matchesSearch && matchesCategory;
+    });
+
     displayData(filtered);
-});
+}
+
+// Hook up filters
+document.getElementById("searchBox").addEventListener("input", applyFilters);
+document.getElementById("categoryFilter").addEventListener("change", applyFilters);
 
 loadData();
