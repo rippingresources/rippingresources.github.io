@@ -200,6 +200,11 @@ async function attachRatingHandlers(cardEl, projectId) {
     });
 }
 
+loadData();
+document.getElementById("searchBox").addEventListener("input", applyFilters);
+document.getElementById("categoryFilter").addEventListener("change", applyFilters);
+
+
 // Search
 function applyFilters() {
 const query = document.getElementById("searchBox").value.toLowerCase();
@@ -217,6 +222,3 @@ const category = document.getElementById("categoryFilter").value;
 
         return matchesSearch && matchesCategory;
     });
-document.getElementById("searchBox").addEventListener("input", applyFilters);
-document.getElementById("categoryFilter").addEventListener("change", applyFilters);
-loadData();
