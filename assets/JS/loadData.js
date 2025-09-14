@@ -201,14 +201,21 @@ async function attachRatingHandlers(cardEl, projectId) {
 }
 
 // Search
-document.getElementById("searchBox").addEventListener("input", () => {
-    const query = document.getElementById("searchBox").value.toLowerCase();
-    const filtered = flpData.filter(row =>
-    (row.Title && row.Title.toLowerCase().includes(query)) ||
-    (row.Creator && row.Creator.toLowerCase().includes(query)) ||
-    (row.Plugins && row.Plugins.toLowerCase().includes(query))
-    );
-    displayData(filtered);
-});
+function applyFilters() {
+const category = document.getElementById("categoryFilter").value;
 
+    const filtered = flpData.filter(row => {
+        // search filter
+        const matchesSearch =
+            (row.Title && row.Title.toLowerCase().includes(query)) ||
+            (row.Creator && row.Creator.toLowerCase().includes(query)) ||
+            (row.Plugins && row.Plugins.toLowerCase().includes(query));
+
+        // category filter
+        const matchesCategory = !category || row.Category === category;
+
+        return matchesSearch && matchesCategory;
+    });
+document.getElementById("searchBox").addEventListener("input", applyFilters);
+document.getElementById("categoryFilter").addEventListener("change", applyFilters);
 loadData();
