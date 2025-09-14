@@ -53,7 +53,10 @@ function makeCard(row) {
     if (row.Plugins.length !== 0) {
         html += `<p title="${row.Plugins}">Plugins: ${row.Plugins}</p>\n`
     }
-
+	 if (row.Category) {
+        html += `<p class="category">Category: ${row.Category}</p>\n`;
+    }
+	
     if (row.notes.length !== 0) {
         html += `<textarea disabled class="notes">${row.notes || ""}</textarea>\n`
     }
@@ -138,63 +141,63 @@ function displayData(data) {
 // Attach rating logic with persisted votes
 async function attachRatingHandlers(cardEl, projectId) {
 	const ratingDivs = cardEl.querySelectorAll('.rating');
-	const accuracySpan = cardEl.querySelector('.accuracy-score');
-	const easeSpan = cardEl.querySelector('.ease-score');
-	const combinedSpan = cardEl.querySelector('.combined-score');
+    const accuracySpan = cardEl.querySelector('.accuracy-score');
+    const easeSpan = cardEl.querySelector('.ease-score');
+    const combinedSpan = cardEl.querySelector('.combined-score');
 
-	// Get user's previous votes for this project
-	const userRef = doc(db, 'ratings', projectId, 'userRatings', auth.currentUser.uid);
-	const userSnap = await getDoc(userRef);
-	let userVotes = {};
-	if (userSnap.exists()) userVotes = userSnap.data();
+    // Get user's previous votes for this project
+    const userRef = doc(db, 'ratings', projectId, 'userRatings', auth.currentUser.uid);
+    const userSnap = await getDoc(userRef);
+    let userVotes = {};
+    if (userSnap.exists()) userVotes = userSnap.data();
 
-	ratingDivs.forEach(ratingDiv => {
-		const fires = ratingDiv.querySelectorAll('.fire-container')[0].querySelectorAll('.fire');
-		const field = ratingDiv.dataset.field;
-		let currentValue = userVotes[field] || 0;
+    ratingDivs.forEach(ratingDiv => {
+        const fires = ratingDiv.querySelectorAll('.fire-container')[0].querySelectorAll('.fire');
+        const field = ratingDiv.dataset.field;
+        let currentValue = userVotes[field] || 0;
 
-		// Highlight initial vote
-		fires.forEach((f, idx) => f.classList.toggle('highlight', idx < currentValue));
+        // Highlight initial vote
+        fires.forEach((f, idx) => f.classList.toggle('highlight', idx < currentValue));
 
-		function updateHighlight(upTo) {
-			fires.forEach((f, idx) => f.classList.toggle('highlight', idx < upTo));
-		}
+        function updateHighlight(upTo) {
+            fires.forEach((f, idx) => f.classList.toggle('highlight', idx < upTo));
+        }
 
-		fires.forEach((fire, idx) => {
-			fire.addEventListener('mouseenter', () => updateHighlight(idx + 1));
-			fire.addEventListener('click', async () => {
-				const clickedValue = idx + 1;
-				if (currentValue === clickedValue) {
-					// If user clicks same rating again -> remove their vote
-					currentValue = 0;
-					updateHighlight(0);
-					await setDoc(userRef, { [field]: deleteField() }, { merge: true });
-				} else {
-					currentValue = clickedValue;
-					updateHighlight(currentValue);
-					await setDoc(userRef, { [field]: currentValue }, { merge: true });
-				}
-			});
-			fire.addEventListener('mouseleave', () => updateHighlight(currentValue));
-		});
-	});
+        fires.forEach((fire, idx) => {
+            fire.addEventListener('mouseenter', () => updateHighlight(idx + 1));
+            fire.addEventListener('click', async () => {
+                const clickedValue = idx + 1;
+                if (currentValue === clickedValue) {
+                    // If user clicks same rating again -> remove their vote
+                    currentValue = 0;
+                    updateHighlight(0);
+                    await setDoc(userRef, { [field]: deleteField() }, { merge: true });
+                } else {
+                    currentValue = clickedValue;
+                    updateHighlight(currentValue);
+                    await setDoc(userRef, { [field]: currentValue }, { merge: true });
+                }
+            });
+            fire.addEventListener('mouseleave', () => updateHighlight(currentValue));
+        });
+    });
 
-	// Update averages
-	onSnapshot(collection(db, 'ratings', projectId, 'userRatings'), snap => {
-		let sumAccuracy = 0, sumEase = 0, countAccuracy = 0, countEase = 0;
-		snap.docs.forEach(d => {
-			const data = d.data();
-			if (data.accuracy != null) { sumAccuracy += data.accuracy; countAccuracy++; }
-			if (data.easeOfUse != null) { sumEase += data.easeOfUse; countEase++; }
-		});
-		const avgAccuracy = countAccuracy ? sumAccuracy / countAccuracy : 0;
-		const avgEase = countEase ? sumEase / countEase : 0;
-		const combined = (avgAccuracy + avgEase) / ((countAccuracy && countEase) ? 2 : 1);
+    // Update averages
+    onSnapshot(collection(db, 'ratings', projectId, 'userRatings'), snap => {
+        let sumAccuracy = 0, sumEase = 0, countAccuracy = 0, countEase = 0;
+        snap.docs.forEach(d => {
+            const data = d.data();
+            if (data.accuracy != null) { sumAccuracy += data.accuracy; countAccuracy++; }
+            if (data.easeOfUse != null) { sumEase += data.easeOfUse; countEase++; }
+        });
+        const avgAccuracy = countAccuracy ? sumAccuracy / countAccuracy : 0;
+        const avgEase = countEase ? sumEase / countEase : 0;
+        const combined = (avgAccuracy + avgEase) / ((countAccuracy && countEase) ? 2 : 1);
 
-		accuracySpan.textContent = avgAccuracy.toFixed(1);
-		easeSpan.textContent = avgEase.toFixed(1);
-		combinedSpan.textContent = combined.toFixed(1);
-	});
+        accuracySpan.textContent = avgAccuracy.toFixed(1);
+        easeSpan.textContent = avgEase.toFixed(1);
+        combinedSpan.textContent = combined.toFixed(1);
+    });
 }
 
 // Search
