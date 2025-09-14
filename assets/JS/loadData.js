@@ -202,6 +202,7 @@ async function attachRatingHandlers(cardEl, projectId) {
 
 // Search
 function applyFilters() {
+const query = document.getElementById("searchBox").value.toLowerCase();
 const category = document.getElementById("categoryFilter").value;
 
     const filtered = flpData.filter(row => {
