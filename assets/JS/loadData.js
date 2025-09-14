@@ -222,3 +222,4 @@ const category = document.getElementById("categoryFilter").value;
 
         return matchesSearch && matchesCategory;
     });
+}
