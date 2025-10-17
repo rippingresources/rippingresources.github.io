@@ -19,16 +19,38 @@ const db = getFirestore(app);
 await signInAnonymously(auth);
 
 let flpData = [];
-
+let currentIndex = 0;
+const BATCH_SIZE = 20;
+const MAX_RENDERED = 60;
+const container = document.getElementById("flp-list");
 // Load CSV data
 async function loadData() {
     const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LKv2QcODF4I3v6H7EJ5PYBzmtF8Vt_oa6iCLTUzb9iDF3jIF8W3fJzqgBXAvlz1DYOD22TlCbMDL/pub?output=csv";
     const res = await fetch(url);
     const csv = await res.text();
-    flpData = Papa.parse(csv, { header: true }).data;
+    flpData = Papa.parse(csv, { header: true }).data.filter(row => row.Title && row.Title.trim() !== "");
     displayData(flpData);
 }
 
+function renderNextBatch() {
+    console.log("Rendering next batch:", currentIndex);
+	const container = document.getElementById("flp-list");
+	const nextBatch = flpData.slice(currentIndex, currentIndex + BATCH_SIZE);
+	nextBatch.forEach(row => {
+		const div = document.createElement("div");
+		div.className = "card";
+		div.innerHTML = makeCard(row);
+		container.appendChild(div);
+	});
+	currentIndex += BATCH_SIZE;
+}
+
+
+window.addEventListener("scroll", () => {
+	if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 3000) {
+		renderNextBatch();
+	}
+});
 // Got lazy... lol 
 // stolen from https://stackoverflow.com/questions/5717093/check-if-a-javascript-string-is-a-url/43467144#43467144 we all steal things from stack overflow
 function isValidHttpUrl(string) {
