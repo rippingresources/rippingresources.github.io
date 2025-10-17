@@ -25,11 +25,15 @@ const MAX_RENDERED = 60;
 const container = document.getElementById("flp-list");
 // Load CSV data
 async function loadData() {
+    const loadingEl = document.getElementById("loading");
+	loadingEl.style.display = "block"; 
+
     const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vR2LKv2QcODF4I3v6H7EJ5PYBzmtF8Vt_oa6iCLTUzb9iDF3jIF8W3fJzqgBXAvlz1DYOD22TlCbMDL/pub?output=csv";
     const res = await fetch(url);
     const csv = await res.text();
     flpData = Papa.parse(csv, { header: true }).data.filter(row => row.Title && row.Title.trim() !== "");
-    displayData(flpData);
+    loadingEl.style.display = "none"; // hide after loading
+	renderNextBatch();
 }
 
 function renderNextBatch() {
